@@ -1,97 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
 
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>Georgetech</title>
-  <meta name="author" content="George Bonner">
-
-  
-  <meta name="description" content="Hey kids! Let&rsquo;s talk about making things in Javascript. I don&rsquo;t mean your dumb cats website, I mean things IN Javascript. What are some &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="http://georgebonnr.github.io/">
-  <link href="/github/favicon.png" rel="icon">
-  <link href="/github/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <script src="/github/javascripts/modernizr-2.0.js"></script>
-  <script src="/github/javascripts/ender.js"></script>
-  <script src="/github/javascripts/octopress.js" type="text/javascript"></script>
-  <link href="/github/atom.xml" rel="alternate" title="Georgetech" type="application/atom+xml">
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-
-  
-
-</head>
-
-<body   >
-  <header role="banner"><hgroup>
-  <h1><a href="/github/">Georgetech</a></h1>
-  
-</hgroup>
-
-</header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/github/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="http://google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:georgebonnr.github.io" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/github/">Blog</a></li>
-  <li><a href="/github/blog/archives">Archives</a></li>
-</ul>
-
-</nav>
-  <div id="main">
-    <div id="content">
-      <div class="blog-index">
-  
-  
-  
-    <article>
-      
-  <header>
+  <title><![CDATA[Georgetech]]></title>
+  <link href="http://georgebonnr.github.io/atom.xml" rel="self"/>
+  <link href="http://georgebonnr.github.io/"/>
+  <updated>2013-10-03T14:05:25-07:00</updated>
+  <id>http://georgebonnr.github.io/</id>
+  <author>
+    <name><![CDATA[George Bonner]]></name>
     
-      <h1 class="entry-title"><a href="/github/blog/2013/10/02/maker-patterns-pt-1/">Maker Patterns Pt. 1</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
 
   
-
-
-<time datetime="2013-10-02T22:34:00-07:00" pubdate data-updated="true">Oct 2<span>nd</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Hey kids!</p>
+  <entry>
+    <title type="html"><![CDATA[Maker Patterns Pt. 1]]></title>
+    <link href="http://georgebonnr.github.io/blog/2013/10/02/maker-patterns-pt-1/"/>
+    <updated>2013-10-02T22:34:00-07:00</updated>
+    <id>http://georgebonnr.github.io/blog/2013/10/02/maker-patterns-pt-1</id>
+    <content type="html"><![CDATA[<p>Hey kids!</p>
 
 <p>Let&rsquo;s talk about making things in Javascript.  I don&rsquo;t mean your dumb cats website, I mean things IN Javascript.  What are some useful ways to make (build / instantiate) things (objects) in the Javascript language?</p>
 
@@ -153,99 +80,7 @@ var extend = function(to, from) {
 
 <p>Next Post:
 I&rsquo;ll get into prototypes in Javascript &ndash; what they are, how they came to be, and different ways you can use them to construct objects.  If you have any questions about anything in this post you can email me through my Github profile in the sidebar. Stay tuned!</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/github/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
-<aside class="sidebar">
-  
-    <section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/github/blog/2013/10/02/maker-patterns-pt-1/">Maker Patterns Pt. 1</a>
-      </li>
-    
-  </ul>
-</section>
-
-<section>
-  <h1>GitHub Repos</h1>
-  <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
-  </ul>
-  
-  <a href="https://github.com/georgebonnr">@georgebonnr</a> on GitHub
-  
-  <script type="text/javascript">
-    $.domReady(function(){
-        if (!window.jXHR){
-            var jxhr = document.createElement('script');
-            jxhr.type = 'text/javascript';
-            jxhr.src = '/javascripts/libs/jXHR.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(jxhr, s);
-        }
-
-        github.showRepos({
-            user: 'georgebonnr',
-            count: none,
-            skip_forks: false,
-            target: '#gh_repos'
-        });
-    });
-  </script>
-  <script src="/github/javascripts/github.js" type="text/javascript"> </script>
-</section>
-
-
-
-
-
-  
-</aside>
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - George Bonner -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-  - <span class="credit">Theme by <a href="http://www.gehaxelt.in">Gehaxelt</a></span>
-  <span class="credit">and <a href="http://www.it-solutions-neef.de">IT Solutions Neef</a></span>
-</p>
-
-</footer>
-  
-
-
-
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</body>
-</html>
+</feed>
