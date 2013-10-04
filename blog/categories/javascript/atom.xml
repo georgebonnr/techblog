@@ -4,7 +4,7 @@
   <title><![CDATA[Category: javascript | Georgetech]]></title>
   <link href="http://georgebonnr.github.io/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://georgebonnr.github.io/"/>
-  <updated>2013-10-03T19:08:27-07:00</updated>
+  <updated>2013-10-03T19:16:04-07:00</updated>
   <id>http://georgebonnr.github.io/</id>
   <author>
     <name><![CDATA[George Bonner]]></name>
@@ -20,7 +20,7 @@
     <id>http://georgebonnr.github.io/blog/2013/10/02/maker-patterns-pt-1</id>
     <content type="html"><![CDATA[<p>Hey kids!</p>
 
-<p>Let&rsquo;s talk about making things in Javascript.  I don&rsquo;t mean your dumb cats website, I mean things IN Javascript.  What are some useful ways to make (build / instantiate) things (objects) in the Javascript language?</p>
+<p>Let&rsquo;s talk about making things in Javascript.  I don&rsquo;t mean making your dumb cats website, I mean making things IN Javascript.  What are some useful ways to make (build / instantiate) things (objects) in the Javascript language?</p>
 
 <p>For this post I&rsquo;m assuming that you&rsquo;re fairly new to Javascript, although you may have a little bit of programming experience in another language.</p>
 
