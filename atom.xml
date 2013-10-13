@@ -4,7 +4,7 @@
   <title><![CDATA[Georgetech]]></title>
   <link href="http://georgebonnr.github.io/atom.xml" rel="self"/>
   <link href="http://georgebonnr.github.io/"/>
-  <updated>2013-10-11T23:29:27-07:00</updated>
+  <updated>2013-10-13T16:05:06-07:00</updated>
   <id>http://georgebonnr.github.io/</id>
   <author>
     <name><![CDATA[George Bonner]]></name>
@@ -19,28 +19,6 @@
     <updated>2013-10-11T23:25:00-07:00</updated>
     <id>http://georgebonnr.github.io/blog/2013/10/11/absurd</id>
     <content type="html"><![CDATA[<p><a href="http://krasimir.github.io/absurd/">And all the people rejoiced.</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Maker Patterns Pt. 2]]></title>
-    <link href="http://georgebonnr.github.io/blog/2013/10/06/maker-patterns-pt-2/"/>
-    <updated>2013-10-06T20:25:00-07:00</updated>
-    <id>http://georgebonnr.github.io/blog/2013/10/06/maker-patterns-pt-2</id>
-    <content type="html"><![CDATA[<p>All About Prototypes</p>
-
-<p>We&rsquo;ve all got baggage. Javascript is no exception. It just so happens that every single function that gets defined in Javascript comes with its own companion object called a prototype. This prototype object in most cases hangs around doing nothing at all (besides creating useless overhead). When it comes time to instantiate an object in Javascript, though, this prototype &ldquo;assistant&rdquo; offers powerful functionality.</p>
-
-<p>Before we go further with prototypes let&rsquo;s delve into a little backstory on the subject, which unfortunately will require revealing a few of the skeletons in Javascript&rsquo;s closet. In 1995 Netscape tasked employee Brendan Eich with developing a new scripting language for the Netscape browser. This language was aimed at the exploding class of amateur programmers eager to create websites that blinked, flashed, danced, jumped, and sang. This new language was also designed to be a direct competitor to Visual Basic (Developers who associate Javascript with the current world of Node, Angular, and other coolier-than-thou environments might feel&hellip; perturbed, to put it mildly, about the last two sentences.  &hellip;I said there would be skeletons).
-Under pressure to produce a working prototype of the language in a short amount of time, Brendan Eich grabbed some closures from Scheme, threw in a sweet prototype-based inheritance model inspired by Self, shrugged at or failed to notice a host of crippling idiosyncrasies (for example <code>alert(typeof NaN); //alerts 'Number' alert(NaN === NaN);  //evaluates false</code>), and called it a day.</p>
-
-<p>Eich&rsquo;s bosses looked at the language, smiled and nodded politely, and promptly told him to arbitrarily add some stuff to it to make it look more like Java. Java was the new hotness at the time and Netscape desperately wanted to leverage that hotness – enough that they even decided to name the new language Javascript, again for reasons that were mostly arbitrary and marketing-related. So the end result was a scripting language misleadingly-named Javascript with a bastardized version of prototypal inheritance that included some Java-esque keywords and functionality stuck on with Elmer&rsquo;s glue. Also, most of the weird quirks that the language started out with coasted through to the final version unfixed. THIS <a href="http://www.javaworld.com/javaworld/jw-03-1996/idgns.java.1995/idgns.java.1995.114.html">http://www.javaworld.com/javaworld/jw-03-1996/idgns.java.1995/idgns.java.1995.114.html</a> is what the press release looked like (note the breathless mention of &ldquo;object-oriented&rdquo;, which was true in only the hackiest of elmers-gluiest senses, and also the embarrassing mention of visual basic).</p>
-
-<p>Pseudo Classical</p>
-
-<p>And that&rsquo;s it.  Now go ahead and use these patterns to build your cats website.  I was joking when I said it was dumb&hellip; your cats website is gonna be great.</p>
-
-<p>If you have more questions feel free to email me at georgebonnr (at) gmail.com.</p>
 ]]></content>
   </entry>
   
