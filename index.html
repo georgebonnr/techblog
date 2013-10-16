@@ -105,6 +105,125 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2013/10/06/maker-patterns-pt-2/">Maker Patterns Pt. 2</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-06T20:25:00-07:00" pubdate data-updated="true">Oct 6<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>All About Prototypes</h2>
+
+<p>We&rsquo;ve all got baggage. Javascript is no exception. It just so happens that every single function that gets defined in Javascript comes with its own companion object called a prototype. This prototype object in most cases hangs around doing nothing at all (besides creating useless overhead). When it comes time to instantiate an object in Javascript, though, this prototype &ldquo;assistant&rdquo; offers powerful functionality.</p>
+
+<p>Before we go further with prototypes let&rsquo;s delve into a little backstory, which unfortunately will include discovering some of the skeletons in Javascript&rsquo;s closet. In 1995 Netscape tasked employee Brendan Eich with developing a new scripting language for the Netscape browser. This language would be aimed at the then-exploding class of amateur programmers ready and eager to create websites that blinked, flashed, danced, jumped, and sang. This language was also supposed to be a direct competitor to Visual Basic (readers who associate Javascript with the current world of Node, Angular, and other coolier-than-thou environments might feel&hellip; perturbed, to put it mildly, about the last two sentences.  &hellip;I said there would be skeletons).</p>
+
+<p>Under pressure to produce a working prototype of the language in a short amount of time, Brendan Eich grabbed some closures from Scheme, threw in a sweet prototype-based inheritance model inspired by Self, shrugged at or failed to notice a host of crippling idiosyncrasies (for example <code>alert(typeof NaN); //alerts 'Number' alert(NaN === NaN);  //evaluates false</code>), and called it a day.</p>
+
+<p>Eich&rsquo;s bosses looked at the language, smiled and nodded politely, and told him to add a bunch of stuff to it to make it look more like Java. Java was the new hotness at the time and Netscape desperately wanted to leverage that hotness – enough that they even decided to name the new language Javascript, again for reasons that were mostly arbitrary and marketing-related. So the end result was a scripting language misleadingly-named Javascript that included a bastardized version of prototypal inheritance featuring some Java-esque functionality stuck on with Elmer&rsquo;s glue.</p>
+
+<p>Also, most of the aforementioned crippling idiosyncracies coasted through to the final version unfixed. THIS <a href="http://www.javaworld.com/javaworld/jw-03-1996/idgns.java.1995/idgns.java.1995.114.html">http://www.javaworld.com/javaworld/jw-03-1996/idgns.java.1995/idgns.java.1995.114.html</a> is what the press release looked like (note the breathless mention of &ldquo;object-oriented&rdquo;, which was true in only the hackiest of elmers-gluiest senses, and also the embarrassing mention of visual basic).</p>
+
+<p>Let&rsquo;s step over that skeleton clutching your ankle and move on!</p>
+
+<p>If you haven&rsquo;t figured it out already, Protypal inheritance is the pattern that attempts to return to Eich&rsquo;s original ideas, and Pseudo-classical is the pattern that makes use of the fake-object-oriented parts that got added to by his bosses.</p>
+
+<h2>Prototypal</h2>
+
+<pre><code>var Pizza = function(size) {
+  var pizza = Object.create(Pizza.prototype);
+  pizza.size = size;
+  pizza.sauce = tomato;
+  pizza.slices = 0
+
+  return pizza;
+}
+
+Pizza.prototype.cheese = mozzarella;
+
+Pizza.prototype.slice = function() {
+  this.slices += 2;
+  // slice in this case is a verb, not a noun.
+}
+
+var myPizza = Pizza(14)
+</code></pre>
+
+<p>Remember I said that a prototype was a companion object. One common (and understandable) source of confusion for Javascript beginners is that when they see &ldquo;Pizza.prototype&rdquo; they assume it refers to some sort of parent of the Pizza constructor. In fact, to stick with the familial analogy, Pizza.prototype is more like Pizza&rsquo;s invisible friend that we suddenly decided to start addressing by name (perhaps something a late-80s Steven Spielberg might have directed).</p>
+
+<p>What&rsquo;s interesting is that the word &ldquo;prototype&rdquo; does in fact refer to a parent-child relationship – it means that the <code>Pizza.prototype</code> object is intended to be a parent to any pizza instances that are created using the Pizza function, such as our example <code>myPizza</code> (<code>Object.create()</code> on line 27 is what actually sets that parent-child relationship in this pattern). This means that when we refer to <code>myPizza.cheese</code>, <code>myPizza</code>, finding that it has no immediate property named cheese, will ask its designated parent object if it has that property, and if does, return that property as if it was its own. Thus <code>myPizza.cheese</code> will return <code>mozazarella</code>.</p>
+
+<p><em>PROS:</em> <br>
+&ndash;    Good for memory management, since we only define the <code>slice</code> method and <code>cheese</code> property in one place and let all instantiated objects refer to those properties rather than owning their own copy (we are making the decision for now that all pizzas only need to use mozzarella cheese, which if you&rsquo;ve ever tried to experiment with cheddar as a substitue at home you will understand). <br>
+–    Cleaner and safer than using mixins (which we looked at in Pt. 1) <br>
+–    Supports subclassing (which we may get into in another post) <br>
+–    Makes Brendan Eich feel good about his decisions in life? <br></p>
+
+<p><em>CONS:</em> <br>
+&ndash; Worse performance than other patterns in certain scenarios. <br>
+&ndash; Different than typical OOP syntax &ndash; can cause mild-to-moderate confusion for beginners coming from &ldquo;classical&rdquo; languages.</p>
+
+<h2>Pseudo-classical</h2>
+
+<pre><code>var Pizza = function(size) {
+
+  this.size = size;
+  this.sauce = tomato;
+  this.slices = 0;
+
+}
+
+Pizza.prototype.cheese = mozzarella;
+
+Pizza.prototype.slice = function() {
+  this.slices += 2;
+}
+
+var myPizza = new Pizza(14)
+</code></pre>
+
+<p>If you&rsquo;re comfortable with OOP this pattern will look the most familiar to you.  What may not be clear is how the pseudo-classical pattern is using prototypal inheritance under the hood. The easiest way to vizualize this is to mentally insert <code>this = Object.create(Pizza.prototype)</code> as the first line inside <code>Pizza</code> and then mentally insert <code>return this</code> as the last line in <code>Pizza</code>. This way the prototypal inheritance is established and the classical syntax is preserved (the use of the <code>new</code> keyword is what indicates to Javascript that this constructor function is intended to be used in the pseudoclassical style).</p>
+
+<p><em>PROS:</em> <br>
+&ndash; Familiar to classical programmers <br>
+&ndash; Has been optimized for performance in certain scenarios <br></p>
+
+<p><em>CONS:</em> <br>
+&ndash; Ridiculous bugs can happen if you forget the <code>new</code> keyword <br>
+&ndash; Obscures what is really happening behind the scenes in Javascript to acheive the inheritance it offers <br>
+&ndash; Using this pattern when making subclasses (a category of constructed objects that delegates to another constructed category) can have serious downsides (I prefer a combination of this pattern with prototypal for subclassing – I might do another post on the interesting challenges that subclassing poses in js).</p>
+
+<p>That&rsquo;s it! If you want to review the other two patterns you can find them HERE.  Now go ahead and use these patterns to build your cats website. I was joking when I said it was dumb&hellip; it&rsquo;s gonna be great, people will love it.</p>
+
+<p>As always if you have more questions feel free to email me at georgebonnr (at) gmail.com.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2013/10/02/maker-patterns-pt-1/">Maker Patterns Pt. 1</a></h1>
     
     
@@ -223,6 +342,10 @@ I&rsquo;ll get into prototypes in Javascript &ndash; what they are, how they cam
     
       <li class="post">
         <a href="/blog/2013/10/11/absurd/">Absurd.</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/06/maker-patterns-pt-2/">Maker Patterns Pt. 2</a>
       </li>
     
       <li class="post">
