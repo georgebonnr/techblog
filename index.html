@@ -143,12 +143,12 @@ var loop = function(array, iterator) {
 
 <p><img src="/images/devtools_post/alert3.png" /></p>
 
-<p>Ruh-roh.  Where&rsquo;s the index?  You probably already know why it&rsquo;s not displaying, but I&rsquo;m going to use this simple problem to introduce you to using debugger tools in Chrome.  A good question to ask yourself when you need to debug your code is… &ldquo;what is the justification for my expectation that my code will run the way I expect?</p>
+<p>Ruh-roh.  Where&rsquo;s the index?  You probably already know why it&rsquo;s not displaying, but I&rsquo;m going to use this simple scenario to demonstrate what a typical debugging workflow would look like.  A good question to ask yourself when you encounter a bug is &ldquo;what is the justification for my expectation that my code will run the way that I expect?</p>
 
-<p>If you think you have a place where your expectation and the reality of the code (the bug) diverge, go to the line BEFORE that and on a new line type &ldquo;debugger;&rdquo;  This will cause Chrome to stop at that debugger statement when you run your code and wait for further instructions to proceed.</p>
+<p>If you think you can identify a place where your expectation and the reality of the code (the bug) might diverge, enter a new line above that point and type <code>debugger;</code>  This will cause Chrome to pause execution at that line and wait for further instructions to proceed.</p>
 
-<p>If you prefer not to type anything in your code you can set virtual debugger statements called breakpoints in Chrome dev tools – one downside of breakpoints, though, is that if you change the number of lines in your code and run the script again, Chrome&rsquo;s breakpoints may wind up on lines that you didn&rsquo;t intend.
-Here&rsquo;s what happens in Chrome dev tools (command+option+i in Chrome) with our debugger statement inserted:</p>
+<p>If you prefer not to type anything in your code you can set virtual debugger statements called breakpoints in Dev Tools – one downside of breakpoints, though, is that if you change the number of lines in your code and run the script again, Chrome&rsquo;s breakpoints may wind up on lines that you didn&rsquo;t intend.
+Here&rsquo;s what happens in Dev Tools (command+option+i in Chrome) when we run the code again with our debugger statement inserted:</p>
 
 <p><img src="/images/devtools_post/debug1.png" /></p>
 
