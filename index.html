@@ -81,6 +81,119 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2013/10/18/dev-tools-debugging-101/">Dev Tools Debugging 101</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-18T09:58:00-07:00" pubdate data-updated="true">Oct 18<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>As you might imagine we use Chrome Dev Tools quite a bit at Hack Reactor.  Dev Tools has quickly become an indispensable tool for front-end work, but it&rsquo;s even more valuable as a debugging tool for your javascript programs.</p>
+
+<p>If you don&rsquo;t already use it in your debugging workflow (I&rsquo;m looking at you, chronic console.logger), approximately NOW would be a good time to learn.  I&rsquo;m going to use a simple bug scenario to introduce you to Dev Tools debugging.</p>
+
+<p>Imagine we are given a problem to solve:</p>
+
+<pre><code>// given an array, write a function that will, for every item in the array, alert to the screen a string containing the item and the 
+// item's index in the array.
+// you have been given a "loop" function, which takes an array and also takes a function which will be called on every item in the // array.
+
+var example = ["a","b","c"];
+
+var loop = function(array, iterator) {
+  for (var i=0; i&lt;array.length; i++) {
+    iterator(array[i]);
+  }
+};
+</code></pre>
+
+<p>our solution:</p>
+
+<pre><code>var alertArray = function(array) {
+  loop(array, function(item, index){
+    alert(item + " " + index);
+  });
+};
+</code></pre>
+
+<p>So let&rsquo;s run this solution.  I set up a simple html page and load the code we wrote in a script tag.  I&rsquo;m going to invoke the function we wrote by adding alertArray(example); to the script.</p>
+
+<p>When I open the page and the script runs I see:</p>
+
+<p><img src="/images/devtools_post/alert1.png" /></p>
+
+<br>
+
+
+<p><img src="/images/devtools_post/alert2.png" /></p>
+
+<br>
+
+
+<p><img src="/images/devtools_post/alert3.png" /></p>
+
+<p>Ruh-roh.  Where&rsquo;s the index?  You probably already know why it&rsquo;s not displaying, but I&rsquo;m going to use this simple problem to introduce you to using debugger tools in Chrome.  A good question to ask yourself when you need to debug your code is… &ldquo;what is the justification for my expectation that my code will run the way I expect?
+If you think you have a place where your expectation and the reality of the code (the bug) diverge, go to the line BEFORE that and on a new line type &#8220;debugger;&rdquo;  This will cause Chrome to stop at that debugger statement when you run your code and wait for further instructions to proceed.  If you prefer not to type anything in your code you can set virtual debugger statements called breakpoints in Chrome dev tools – one downside of breakpoints, though, is that if you change the number of lines in your code and run the script again, Chrome&rsquo;s breakpoints may wind up on lines that you didn&rsquo;t intend.
+Here&rsquo;s what happens in Chrome dev tools (command+option+i in Chrome) with our debugger statement inserted:</p>
+
+<p><img src="/images/devtools_post/debug1.png" /></p>
+
+<p>Step over/into/out of are very handy tools that you will be using for hours, so here&rsquo;s some more details on each:</p>
+
+<ul>
+<li><p>step over will proceed by a single line of code. If there is a function call in the executed line, step over will call the function and do whatever work is contained therein… but you will not see the workings of the function. Useful if you need to proceed through a function call that you are sure is not the source of your bug.</p></li>
+<li><p>step into will also proceed by one line of code. If there is a function call it will transport you to the place in your code where that function call is actually running.  You will be able to inspect the internals (variables, etc) of that function.</p></li>
+<li><p>step out of does not &ldquo;rewind&rdquo; out of a function call (which the arrow pointing up may make you think at first), rather it will &ldquo;fast forward&rdquo; through the rest of a function (stepping over any other function calls contained therein) and return you to its parent function.</p></li>
+</ul>
+
+
+<p>So to proceed I&rsquo;m going to click step over (or step into) to get to the beginning of line 18 (in the context of line 17 step over and step will do the same thing since there&rsquo;s no function call on that line).</p>
+
+<p>At the beginning of line 18 my console will look exactly the same.  Line 18, however, contains the call to the loop function, so I&rsquo;m going to click &ldquo;step into.&rdquo;  Here&rsquo;s what I&rsquo;ll see:</p>
+
+<p><img src="/images/devtools_post/debug2.png" /></p>
+
+<p>I&rsquo;m going to click step over again to get to line 8, then I&rsquo;m going to click step into to go into my iterator call (in this case the anonymous function where I&rsquo;m alerting).  Here&rsquo;s what I see:</p>
+
+<p><img src="/images/devtools_post/debug3.png" /></p>
+
+<br>
+
+
+<p><img src="/images/devtools_post/debug4.png" /></p>
+
+<p>For a problem this simple it may have seemed like overkill to use this debugging procedure in Dev Tools (especially when you can hit line 8 with a rock from line 19).
+When your program gets big enough, though, that your functions call functions located in separate files, or your recursive function has a bug somewhere in its 15th call to itself, Dev Tools will save your butt.</p>
+
+<p>Practice this pattern!</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2013/10/11/absurd/">Absurd.</a></h1>
     
     
@@ -351,6 +464,10 @@ I&rsquo;ll get into prototypes in Javascript &ndash; what they are, how they cam
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/10/18/dev-tools-debugging-101/">Dev Tools Debugging 101</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/10/11/absurd/">Absurd.</a>
