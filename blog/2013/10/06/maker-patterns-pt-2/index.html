@@ -138,9 +138,9 @@ Pizza.prototype.slice = function() {
 var myPizza = Pizza(14)
 </code></pre>
 
-<p>Remember I said that a prototype was a companion object. One common (and understandable) source of confusion for Javascript beginners is that when they see &ldquo;Pizza.prototype&rdquo; they assume it refers to some sort of parent of the Pizza constructor. In fact, to stick with the familial analogy, Pizza.prototype is more like Pizza&rsquo;s invisible friend that we suddenly decided to start addressing by name (perhaps something a late-80s Steven Spielberg might have directed).</p>
+<p>Remember I said that a prototype was a companion object. One common (and understandable) source of confusion for Javascript beginners is that when they see &ldquo;Pizza.prototype&rdquo; they assume it refers to some sort of parent of the Pizza constructor. In fact, to stick with the familial analogy, Pizza.prototype is more like Pizza&rsquo;s invisible friend that we suddenly decided to start addressing by name (perhaps this is a movie a late-80s Steven Spielberg might have directed).</p>
 
-<p>What&rsquo;s interesting is that the word &ldquo;prototype&rdquo; does in fact refer to a parent-child relationship – it means that the <code>Pizza.prototype</code> object is intended to be a parent to any pizza instances that are created using the Pizza function, such as our example <code>myPizza</code> (<code>Object.create()</code> on line 27 is what actually sets that parent-child relationship in this pattern). This means that when we refer to <code>myPizza.cheese</code>, <code>myPizza</code>, finding that it has no immediate property named cheese, will ask its designated parent object if it has that property, and if does, return that property as if it was its own. Thus <code>myPizza.cheese</code> will return <code>mozazarella</code>.</p>
+<p>What&rsquo;s interesting is that the word &ldquo;prototype&rdquo; does in fact refer to a parent-child relationship – it means that the <code>Pizza.prototype</code> object is intended to be a parent to any pizza instances that are created using the Pizza function, such as our example <code>myPizza</code>. <code>Object.create()</code> on line 27 is what actually sets that parent-child relationship in this pattern. This means that when we refer to <code>myPizza.cheese</code>, <code>myPizza</code>, finding that it has no immediate property named cheese, will ask its designated parent object if it has that property, and if does, return that property as if it was its own. Thus <code>myPizza.cheese</code> will return <code>mozzarella</code>.</p>
 
 <p><em>PROS:</em> <br>
 &ndash;    Good for memory management, since we only define the <code>slice</code> method and <code>cheese</code> property in one place and let all instantiated objects refer to those properties rather than owning their own copy (we are making the decision for now that all pizzas only need to use mozzarella cheese, which if you&rsquo;ve ever tried to experiment with cheddar as a substitue at home you will understand). <br>
@@ -179,12 +179,12 @@ var myPizza = new Pizza(14)
 
 <p><em>CONS:</em> <br>
 &ndash; Ridiculous bugs can happen if you forget the <code>new</code> keyword <br>
-&ndash; Obscures what is really happening behind the scenes in Javascript to acheive the inheritance it offers <br>
+&ndash; Obscures what is really happening behind the scenes in Javascript to acheive the inheritance<br>
 &ndash; Using this pattern when making subclasses (a category of constructed objects that delegates to another constructed category) can have serious downsides (I prefer a combination of this pattern with prototypal for subclassing – I might do another post on the interesting challenges that subclassing poses in js).</p>
 
 <p>That&rsquo;s it! If you want to review the other two patterns you can find them <a href="http://georgebonnr.github.io/blog/2013/10/02/maker-patterns-pt-1/">here</a>.  Now go ahead and use these patterns to build your cats website. I was joking when I said it was dumb&hellip; it&rsquo;s gonna be great, people will love it.</p>
 
-<p>As always if you have more questions feel free to email me at georgebonnr (at) gmail.com.</p>
+<p>As always if you have more questions feel free to email me at <a href="&#x6d;&#x61;&#105;&#x6c;&#x74;&#111;&#58;&#103;&#101;&#111;&#114;&#x67;&#x65;&#x62;&#111;&#110;&#x6e;&#x72;&#x40;&#103;&#109;&#x61;&#105;&#108;&#x2e;&#99;&#111;&#x6d;&#46;">&#x67;&#x65;&#x6f;&#114;&#x67;&#101;&#x62;&#x6f;&#110;&#110;&#x72;&#64;&#103;&#x6d;&#97;&#x69;&#x6c;&#46;&#99;&#111;&#x6d;&#46;</a></p>
 </div>
 
 
