@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: javascript, | Georgetech]]></title>
-  <link href="http://georgebonnr.github.io/blog/categories/javascript/atom.xml" rel="self"/>
+  <title><![CDATA[Category: node | Georgetech]]></title>
+  <link href="http://georgebonnr.github.io/blog/categories/node/atom.xml" rel="self"/>
   <link href="http://georgebonnr.github.io/"/>
   <updated>2013-10-28T03:41:05-07:00</updated>
   <id>http://georgebonnr.github.io/</id>
