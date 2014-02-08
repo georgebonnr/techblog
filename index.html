@@ -81,6 +81,103 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2014/02/08/how-to-crash-chrome-v8-in-one-line/">How to Crash Chrome V8 in One Line</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-08T14:29:00-08:00" pubdate data-updated="true">Feb 8<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>One of the best pranks you can play on JavaScript is setting a length property on an object and giving it a negative value.</p>
+
+<p>Whammo:</p>
+
+<pre><code>var foo = {
+  length: -5
+};
+</code></pre>
+
+<p>I decided to experiment the other day with what kind of trouble I could cause with this.
+What exactly a negative length is, and what particular cocktail of drugs you would have to consume to want to try this in a real project is a subject for another blog post.</p>
+
+<p>Something that always produces interesting results is calling array methods on objects.  For instance:</p>
+
+<pre><code>var obj = {foo: "bar", baz: "qux"};
+Array.prototype.push.call(obj, 'thud');
+</code></pre>
+
+<p>returns
+<code>1</code>.</p>
+
+<p>And obj is now</p>
+
+<p><code>Object {0: "thud", foo: "bar", baz: "qux", length: 1}</code></p>
+
+<p>You don&rsquo;t say.
+Similarly we can call</p>
+
+<p><code>Array.prototype.pop.call(obj)</code></p>
+
+<p>Which returns <code>"thud"</code> and leaves obj as <code>Object {foo: "bar", baz: "qux", length: 0}</code></p>
+
+<p>Creepy stuff.</p>
+
+<p>So anyway, back to our object, <code>var foo = { length: -5 };</code></p>
+
+<p>One of the first things I tried was <code>Array.prototype.slice.call(foo)</code>.</p>
+
+<p>Screeeeeeeeeech.  (this is where you&rsquo;d see a trainwreck gif if this were that sort of programming blog).</p>
+
+<p>Pro tip: if your browser process is crashed, click the hamburger icon, select tools, and go to Task Manager.  Chrome will let you kill the individual tab with the crashed process.</p>
+
+<p>At this point I was pretty curious about what what made this fail so catastrophically.</p>
+
+<p>I looked up the V8 message board, and lo and behold, somebody had recently submitted an issue about this same thing, but nobody had investigated it yet.</p>
+
+<p>So I dove into the source code – you can either build it locally, or check out <a href="https://github.com/v8/v8">the official mirror on github</a>.</p>
+
+<p>After some digging, I traced the issue to line 684 in the slice method in <a href="https://github.com/v8/v8/blob/d916860bc096b8824dbb4459c1b9c5cff2fca182/src/array.js">array.js</a> (V8 binds its own method called ArraySlice, which delegates to two different helper methods depending on the size of the array).</p>
+
+<p>The <code>TO_UINT32</code> constant turned out to be a Python macro <a href="https://github.com/v8/v8/blob/e9a2eb091b2801cb98333edb44ba7a68611fe886/src/macros.py">stored here</a>.</p>
+
+<p>The macro uses a bitwise unsigned right shift operator to quickly convert the argument to a positive integer, if it wasn&rsquo;t already.  However, when a negative value is shifted in this manner, unpredictable things can happen – usually an extremely large positive number is returned. In this case <code>-5 &gt;&gt;&gt; 0</code> will return <code>4294967291</code>.</p>
+
+<p>So the length of the array or object is set internally to <code>4294967291</code>, which in turn sets an end index for handling the particulars of the slicing, and it&rsquo;s all downhill from there.</p>
+
+<p>Some of the array methods don&rsquo;t break in this same manner – namely, the ones that don&rsquo;t rely on the length of the array being accurate to succeed.  However, quite a few of them do crash when passed an object with a negative length property.  For instance, <code>Array.prototype.shift.call({length: -5})</code>.</p>
+
+<p>While this is, again, something that would hardly ever come up in production, I posted my findings on the issue, and it led to a feature request to change this implementation in ES6 / Harmony.
+Yay, the internet!</p>
+
+<p>I&rsquo;m sure there are tons of other &lsquo;one-liners&rsquo; out there to bring your browser to its knees – more than just the usual suspect of an endless loop like <code>while (true) {true}</code>.  Anybody got any others they want to share?</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2014/01/19/">Prototypes Are Not Classes</a></h1>
     
     
@@ -190,7 +287,7 @@
 <p>And a <a href="http://launch.co/story/and-the-grand-prize-winners-of-the-launch-hackathon-are-5th">wrap-up message</a> from Jason Calcanis.
 Congrats to the top 5 teams – they showcased some amazing products and I can&rsquo;t wait to see what they do next!</p>
 
-<p>If you have any questions about our team, our project, or just want to chat, please drop me a line at <a href="&#109;&#97;&#105;&#x6c;&#116;&#111;&#58;&#x67;&#x65;&#x6f;&#114;&#103;&#x65;&#98;&#x6f;&#110;&#110;&#x72;&#x40;&#x67;&#x6d;&#x61;&#x69;&#x6c;&#x2e;&#x63;&#111;&#109;">&#x67;&#x65;&#111;&#114;&#x67;&#101;&#x62;&#x6f;&#110;&#x6e;&#114;&#x40;&#103;&#x6d;&#97;&#x69;&#x6c;&#x2e;&#x63;&#x6f;&#x6d;</a>.  We&rsquo;re always looking to make new friends!</p>
+<p>If you have any questions about our team, our project, or just want to chat, please drop me a line at <a href="&#x6d;&#97;&#105;&#x6c;&#x74;&#111;&#58;&#x67;&#x65;&#x6f;&#x72;&#103;&#101;&#98;&#111;&#110;&#110;&#x72;&#x40;&#x67;&#x6d;&#97;&#x69;&#x6c;&#x2e;&#x63;&#x6f;&#x6d;">&#x67;&#x65;&#x6f;&#114;&#x67;&#x65;&#x62;&#111;&#x6e;&#x6e;&#x72;&#64;&#x67;&#x6d;&#x61;&#x69;&#x6c;&#x2e;&#x63;&#111;&#109;</a>.  We&rsquo;re always looking to make new friends!</p>
 
 <br>
 
@@ -488,7 +585,7 @@ When your program gets big enough, though, that your functions call functions lo
 
 <p>Practice this pattern!</p>
 
-<p>As always, shoot any questions or conversations to <a href="&#109;&#x61;&#x69;&#x6c;&#x74;&#111;&#58;&#x67;&#x65;&#111;&#x72;&#x67;&#x65;&#98;&#x6f;&#x6e;&#110;&#x72;&#64;&#x67;&#109;&#97;&#x69;&#108;&#x2e;&#x63;&#x6f;&#x6d;">&#x67;&#x65;&#111;&#114;&#x67;&#x65;&#x62;&#111;&#x6e;&#x6e;&#x72;&#64;&#x67;&#109;&#97;&#105;&#108;&#x2e;&#99;&#x6f;&#109;</a></p>
+<p>As always, shoot any questions or conversations to <a href="&#109;&#97;&#105;&#x6c;&#116;&#111;&#x3a;&#103;&#101;&#111;&#x72;&#103;&#101;&#x62;&#111;&#110;&#x6e;&#x72;&#x40;&#x67;&#x6d;&#x61;&#x69;&#108;&#x2e;&#99;&#x6f;&#x6d;">&#103;&#x65;&#111;&#x72;&#x67;&#101;&#98;&#x6f;&#x6e;&#x6e;&#x72;&#x40;&#x67;&#109;&#x61;&#105;&#x6c;&#x2e;&#99;&#111;&#109;</a></p>
 </div>
   
   
@@ -607,7 +704,7 @@ var myPizza = new Pizza(14)
 
 <p>That&rsquo;s it! If you want to review the other two patterns you can find them <a href="http://georgebonnr.github.io/blog/2013/10/02/maker-patterns-pt-1/">here</a>.  Now go ahead and use these patterns to build your cats website. I was joking when I said it was dumb&hellip; it&rsquo;s gonna be great, people will love it.</p>
 
-<p>As always if you have more questions feel free to email me at <a href="&#109;&#x61;&#x69;&#x6c;&#x74;&#x6f;&#58;&#103;&#101;&#x6f;&#x72;&#x67;&#x65;&#98;&#x6f;&#x6e;&#x6e;&#x72;&#x40;&#x67;&#109;&#x61;&#105;&#x6c;&#x2e;&#x63;&#111;&#109;&#x2e;">&#103;&#x65;&#111;&#x72;&#x67;&#x65;&#98;&#111;&#110;&#x6e;&#x72;&#x40;&#103;&#109;&#97;&#105;&#x6c;&#x2e;&#99;&#111;&#109;&#x2e;</a></p>
+<p>As always if you have more questions feel free to email me at <a href="&#109;&#97;&#x69;&#108;&#x74;&#111;&#58;&#103;&#101;&#111;&#114;&#x67;&#101;&#x62;&#x6f;&#110;&#x6e;&#x72;&#x40;&#103;&#109;&#x61;&#x69;&#108;&#46;&#99;&#111;&#109;&#x2e;">&#x67;&#x65;&#111;&#114;&#103;&#101;&#x62;&#111;&#110;&#x6e;&#114;&#64;&#103;&#x6d;&#97;&#x69;&#x6c;&#x2e;&#99;&#111;&#109;&#x2e;</a></p>
 </div>
   
   
@@ -737,6 +834,10 @@ I&rsquo;ll get into prototypes in Javascript &ndash; what they are, how they cam
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/02/08/how-to-crash-chrome-v8-in-one-line/">How to Crash Chrome V8 in One Line</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/01/19/">Prototypes Are Not Classes</a>
       </li>
     
@@ -750,10 +851,6 @@ I&rsquo;ll get into prototypes in Javascript &ndash; what they are, how they cam
     
       <li class="post">
         <a href="/blog/2013/10/18/dev-tools-debugging-tips/">Dev Tools Debugging Tips</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/10/06/maker-patterns-pt-2/">Maker Patterns Pt. 2</a>
       </li>
     
   </ul>
