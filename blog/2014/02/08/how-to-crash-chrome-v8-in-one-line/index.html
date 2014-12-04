@@ -103,7 +103,7 @@
 
 <div class="entry-content"><p>One of the best pranks you can play on JavaScript is setting a length property on an object and giving it a negative value.</p>
 
-<p>Whammo:</p>
+<p>Check it:</p>
 
 <pre><code>var foo = {
   length: -5
@@ -111,9 +111,9 @@
 </code></pre>
 
 <p>I decided to experiment the other day with what kind of trouble I could cause with this.
-What exactly a negative length is, and what particular cocktail of drugs you would have to consume to want to try this in a real project is a subject for another blog post.</p>
+What exactly a negative length is, and what would have to go horribly wrong for you to encounter this scenario in a real project is a subject for another (longer) post.</p>
 
-<p>Something that always produces interesting results is calling array methods on objects.  For instance:</p>
+<p>Something that can produce unexpected and fun results is calling array methods on objects.  For instance:</p>
 
 <pre><code>var obj = {foo: "bar", baz: "qux"};
 Array.prototype.push.call(obj, 'thud');
@@ -126,20 +126,19 @@ Array.prototype.push.call(obj, 'thud');
 
 <p><code>Object {0: "thud", foo: "bar", baz: "qux", length: 1}</code></p>
 
-<p>You don&rsquo;t say.
-Similarly we can call</p>
+<p>Similarly we can call</p>
 
 <p><code>Array.prototype.pop.call(obj)</code></p>
 
 <p>Which returns <code>"thud"</code> and leaves obj as <code>Object {foo: "bar", baz: "qux", length: 0}</code></p>
 
-<p>Creepy stuff.</p>
+<p>Huhm!</p>
 
-<p>So anyway, back to our object, <code>var foo = { length: -5 };</code></p>
+<p>So, back to our object, <code>var foo = { length: -5 };</code></p>
 
 <p>One of the first things I tried was <code>Array.prototype.slice.call(foo)</code>.</p>
 
-<p>Screeeeeeeeeech.  (this is where you&rsquo;d see a trainwreck gif if this were that sort of programming blog).</p>
+<p>Screeeeeeeeeech.  (this is where you might see a gif of something exploding or a small animal falling over&hellip; if I weren&rsquo;t already paranoid about rampant gif-pandering on programming blogs).</p>
 
 <p>Pro tip: if your browser process is crashed, click the hamburger icon, select tools, and go to Task Manager.  Chrome will let you kill the individual tab with the crashed process.</p>
 
@@ -159,10 +158,10 @@ Similarly we can call</p>
 
 <p>Some of the array methods don&rsquo;t break in this same manner – namely, the ones that don&rsquo;t rely on the length of the array being accurate to succeed.  However, quite a few of them do crash when passed an object with a negative length property.  For instance, <code>Array.prototype.shift.call({length: -5})</code>.</p>
 
-<p>While this is, again, something that would hardly ever come up in production, I posted my findings on the issue, and it led to a feature request to change this implementation in ES6 / Harmony.
+<p>While this is, again, something that would hardly ever come up in production, I posted about the issue, and it led to a feature request to change this implementation in ES6 / Harmony.
 Yay, the internet!</p>
 
-<p>I&rsquo;m sure there are tons of other &lsquo;one-liners&rsquo; out there to bring your browser to its knees – more than just the usual suspect of an endless loop like <code>while (true) {true}</code>.  Anybody got any others they want to share?</p>
+<p>I&rsquo;m sure there are tons of other &lsquo;one-liners&rsquo; out there that can kill your browser – more than just the usual suspects like <code>while (true) {true}</code>.  Anybody got any others they want to share?</p>
 </div>
 
 
