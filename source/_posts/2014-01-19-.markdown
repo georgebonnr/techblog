@@ -1,0 +1,14 @@
+---
+layout: post
+title: "Prototypes Are Not Classes"
+date: 2014-01-19 19:55
+comments: true
+categories: 
+keywords: javascript
+description: 
+---
+
+"Many people can and do say that “JavaScript has classes.” As a very rough, hand-wavy way of saying that “JavaScript has things that define the characteristics of one or more objects,” this is true. And many people lead healthy, happy, and productive lives without caring whether this statement is actually true, or a wrong but convenient shorthand."
+
+This is a great article!
+http://raganwald.com/2014/01/19/prototypes-are-not-classes.html

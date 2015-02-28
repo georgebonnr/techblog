@@ -2,12 +2,13 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: http://georgebonnr.github.io
+url: http://georgebonnr.github.io/techblog
 title: Georgetech
-subtitle:
+subtitle: # GEORGE: I am putting the subtitle directly in source/_includes/custom/header.html 
 author: George Bonner
 simple_search: http://google.com/search
-description:
+description: Developer tips on Javascript, Node, Backbone, etc.
+keywords: javascript,backbone,node,
 
 # Default date format is "ordinal" (resulting in "July 22nd 2007")
 # You can customize the format as defined in
@@ -16,7 +17,7 @@ description:
 date_format: "ordinal"
 
 # RSS / Email (optional) subscription links (change if using something like Feedburner)
-subscribe_rss: /github/atom.xml
+subscribe_rss: /atom.xml
 subscribe_email:
 # RSS feeds can list your email address if you like
 email:
@@ -26,10 +27,10 @@ email:
 # ----------------------- #
 
 # If publishing to a subdirectory as in http://site.com/project set 'root: /project'
-root: /github
+root:
 permalink: /blog/:year/:month/:day/:title/
 source: source
-destination: public/github
+destination: public
 plugins: plugins
 code_dir: downloads/code
 category_dir: blog/categories
@@ -94,7 +95,7 @@ disqus_short_name:
 disqus_show_comment_count: true
 
 # Google Analytics
-google_analytics_tracking_id:
+google_analytics_tracking_id: UA-44899766-1
 
 # Facebook Like
 facebook_like: false
