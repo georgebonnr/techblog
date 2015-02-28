@@ -1,0 +1,571 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Georgetech]]></title>
+  <link href="http://georgebonnr.github.io/techblog/atom.xml" rel="self"/>
+  <link href="http://georgebonnr.github.io/techblog/"/>
+  <updated>2015-02-28T14:06:17-08:00</updated>
+  <id>http://georgebonnr.github.io/techblog/</id>
+  <author>
+    <name><![CDATA[George Bonner]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[How to Crash Chrome V8 in One Line]]></title>
+    <link href="http://georgebonnr.github.io/techblog/blog/2014/02/08/how-to-crash-chrome-v8-in-one-line/"/>
+    <updated>2014-02-08T14:29:00-08:00</updated>
+    <id>http://georgebonnr.github.io/techblog/blog/2014/02/08/how-to-crash-chrome-v8-in-one-line</id>
+    <content type="html"><![CDATA[<p>One of the best pranks you can play on JavaScript is setting a length property on an object and giving it a negative value.</p>
+
+<p>Example:</p>
+
+<pre><code>var foo = {
+  length: -5
+};
+</code></pre>
+
+<p>I decided to experiment the other day with what kind of trouble I could cause with this.
+What exactly a negative length is, and what would have to go horribly wrong for you to encounter this scenario in a real project is a subject for another (longer) post.</p>
+
+<p>Something that can produce unexpected and fun results is calling array methods on objects.  For instance:</p>
+
+<pre><code>var obj = {foo: "bar", baz: "qux"};
+Array.prototype.push.call(obj, 'thud');
+</code></pre>
+
+<p>returns
+<code>1</code>.</p>
+
+<p>And obj is now</p>
+
+<p><code>Object {0: "thud", foo: "bar", baz: "qux", length: 1}</code></p>
+
+<p>Similarly we can call</p>
+
+<p><code>Array.prototype.pop.call(obj)</code></p>
+
+<p>Which returns <code>"thud"</code> and leaves obj as <code>Object {foo: "bar", baz: "qux", length: 0}</code></p>
+
+<p>Huhm.</p>
+
+<p>So, back to our object, <code>var foo = { length: -5 };</code></p>
+
+<p>One of the first things I tried was <code>Array.prototype.slice.call(foo)</code>.</p>
+
+<p>Screeeeeeeeeech.  (this is where you might see a gif of something exploding or a small animal falling over if I weren&rsquo;t already paranoid about rampant gif-pandering on programming blogs).</p>
+
+<p>Pro tip: if your browser process is crashed, click the hamburger icon, select tools, and go to Task Manager.  Chrome will let you kill the individual tab with the crashed process.</p>
+
+<p>At this point I was pretty curious about what what made this fail so catastrophically.</p>
+
+<p>I looked up the V8 message board, and lo and behold, somebody had recently submitted an issue about this same thing, but nobody had investigated it yet.</p>
+
+<p>So I dove into the source code – you can either build it locally, or check out <a href="https://github.com/v8/v8">the official mirror on github</a>.</p>
+
+<p>After some digging, I traced the issue to line 684 in the slice method in <a href="https://github.com/v8/v8/blob/d916860bc096b8824dbb4459c1b9c5cff2fca182/src/array.js">array.js</a> (V8 binds its own method called ArraySlice, which delegates to two different helper methods depending on the size of the array).</p>
+
+<p>The <code>TO_UINT32</code> constant turned out to be a Python macro <a href="https://github.com/v8/v8/blob/e9a2eb091b2801cb98333edb44ba7a68611fe886/src/macros.py">stored here</a>.</p>
+
+<p>The macro uses a bitwise unsigned right shift operator to quickly convert the argument to a positive integer, if it wasn&rsquo;t already.  However, when a negative value is shifted in this manner, unpredictable things can happen – usually an extremely large positive number is returned. In this case <code>-5 &gt;&gt;&gt; 0</code> will return <code>4294967291</code>.</p>
+
+<p>So the length of the array or object is set internally to <code>4294967291</code>, which in turn sets an end index for handling the particulars of the slicing, and it&rsquo;s all downhill from there.</p>
+
+<p>Some of the array methods don&rsquo;t break in this same manner – namely, the ones that don&rsquo;t rely on the length of the array being accurate to succeed.  However, quite a few of them do crash when passed an object with a negative length property.  For instance, <code>Array.prototype.shift.call({length: -5})</code>.</p>
+
+<p>While this is, again, something that would hardly ever come up in production, I posted about the issue, and it led to a feature request to change this implementation in ES6 / Harmony.
+Yay, the internet!</p>
+
+<p>I&rsquo;m sure there are tons of other &lsquo;one-liners&rsquo; out there that can kill your browser – more than just the usual suspects like  <code>while (true) {true}</code>.  Anybody got any others they want to share?</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Prototypes Are Not Classes]]></title>
+    <link href="http://georgebonnr.github.io/techblog/blog/2014/01/19/"/>
+    <updated>2014-01-19T19:55:00-08:00</updated>
+    <id>http://georgebonnr.github.io/techblog/blog/2014/01/</id>
+    <content type="html"><![CDATA[<p>&ldquo;Many people can and do say that “JavaScript has classes.” As a very rough, hand-wavy way of saying that “JavaScript has things that define the characteristics of one or more objects,” this is true. And many people lead healthy, happy, and productive lives without caring whether this statement is actually true, or a wrong but convenient shorthand.&rdquo;</p>
+
+<p>This is a great article!
+<a href="http://raganwald.com/2014/01/19/prototypes-are-not-classes.html">http://raganwald.com/2014/01/19/prototypes-are-not-classes.html</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[I Just Presented as a Finalist at LAUNCH Hackathon]]></title>
+    <link href="http://georgebonnr.github.io/techblog/blog/2013/11/11/i-just-presented-at-launch-hackathon/"/>
+    <updated>2013-11-11T16:33:00-08:00</updated>
+    <id>http://georgebonnr.github.io/techblog/blog/2013/11/11/i-just-presented-at-launch-hackathon</id>
+    <content type="html"><![CDATA[<p>I had no idea my first hackathon experience would be so awesome, fun, and educational.</p>
+
+<p>Here are a few specific things I learned from this weekend:</p>
+
+<h3>1. Great ideas can come from the unlikeliest places.</h3>
+
+<p>Our team came into Friday evening with an idea that we hatched almost as a joke: in-store scavenger hunts. We had nothing to lose, 48 hours to kill, and an idea that made us chuckle. As we iterated on our idea, we realized that anything that genuinely makes shopping fun has big potential. Some of the people that looked at our app thought the same thing.</p>
+
+<br>
+
+
+<h3>2. Ideas are still valuable</h3>
+
+<p>The prevailing opinion in tech recently is to value great execution over great ideas. To be successful at the highest level you need both, but for proof-of-concept apps there&rsquo;s still room to dream big and deliver an app that, while it might not be perfectly executed, is both usable and functional.  Which brings me to the next thing I learned&hellip;</p>
+
+<br>
+
+
+<h3>3. Get. It. Done.</h3>
+
+<p>A surprising amount of teams give up, lose interest, or aren&rsquo;t able to finish their ideas in time.  Even at LAUNCH, which vets its developers  closely (they mentioned that they had rejected 2 out of every 3 applicants to the event), a significant amount of the teams didn&rsquo;t finish.</p>
+
+<p>Since our team didn&rsquo;t have much time to plan prior to the event, finishing our app the in the time allotted was definitely not a foregone conclusion. The fact that we didn&rsquo;t have anybody with professional design experience also made things a bit more difficult. By the time we were done, each of us had encountered &ldquo;make it work&rdquo; moments where we had to use a piece of tech in an unexpected way or learn something new about the tools we were using.</p>
+
+<p>As it turns out, by Sunday evening we had a fully functional app utilizing Node, Firebase, Facebook authentication, 3 separate Kohl&rsquo;s APIs, Angular on the front end, and a responsive design delivering a solid user experience via a mobile web app. It wasn&rsquo;t pixel-perfect, but it was attractive, usable, and bug-free. And most of all it was finished. Whatever your idea is, finish something.</p>
+
+<br>
+
+
+<h3>4. Practice your pitch.</h3>
+
+<p>We practiced our pitch 2-3 times before presenting to the first-round judging panel, and it paid off. We each got to talk, and we communicated our idea in a compelling way. I don&rsquo;t think we would have wound up on stage at the end of the night if we hadn&rsquo;t put in the time to refine our pitch before we showed our product to anybody.</p>
+
+<br>
+
+
+<h3>5. Have fun.</h3>
+
+<p>When you&rsquo;re relaxed, open to anything, and are working with an awesome team, you can&rsquo;t lose. If we had known at the beginning of the weekend that we would be presenting our product to a panel of VCs and hundreds of other developers we would have stayed later every night, worked harder, argued longer, and in general stressed ourselves out. Instead we just built something cool, and had fun doing it.</p>
+
+<p>Here&rsquo;s a <a href="https://twitter.com/Jason/status/399776123892293632">vine of our team</a> presenting&hellip;</p>
+
+<p>A <a href="http://launch.co/story/team-dom-sawyer-hack-leberry-finn-georgebonnr-kanyang-stephen">shout-out from the @launch folks</a> (I missed the picture)&hellip;</p>
+
+<p>And a <a href="http://launch.co/story/and-the-grand-prize-winners-of-the-launch-hackathon-are-5th">wrap-up message</a> from Jason Calcanis.
+Congrats to the top 5 teams – they showcased some amazing products and I can&rsquo;t wait to see what they do next!</p>
+
+<p>If you have any questions about our team, our project, or just want to chat, please drop me a line at <a href="&#109;&#x61;&#x69;&#x6c;&#x74;&#111;&#58;&#103;&#x65;&#111;&#x72;&#x67;&#x65;&#x62;&#111;&#x6e;&#110;&#114;&#x40;&#x67;&#x6d;&#x61;&#x69;&#x6c;&#x2e;&#x63;&#x6f;&#109;">&#103;&#101;&#x6f;&#114;&#x67;&#101;&#x62;&#111;&#x6e;&#110;&#x72;&#64;&#103;&#109;&#x61;&#x69;&#x6c;&#x2e;&#99;&#x6f;&#x6d;</a>.  We&rsquo;re always looking to make new friends!</p>
+
+<br>
+
+
+<hr />
+
+<h3>Other stuff I&rsquo;ve been working on:</h3>
+
+<h4>1. An app for real-time crowd-based performance art using sockets, smartphones, visualizers, and audio playgrounds (performance is Nov. 17 here in SF)</h4>
+
+<h4>2. A library for working with webaudio (including pitch detection)</h4>
+
+<h4>3. Building a personal site with angular, intention.js, and lots of love.</h4>
+
+<p>Check back soon for posts on these!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Prototyping a Parse-like Server in Node]]></title>
+    <link href="http://georgebonnr.github.io/techblog/blog/2013/10/28/prototyping-a-parse-like-server-in-node/"/>
+    <updated>2013-10-28T03:12:00-07:00</updated>
+    <id>http://georgebonnr.github.io/techblog/blog/2013/10/28/prototyping-a-parse-like-server-in-node</id>
+    <content type="html"><![CDATA[<p>Parse is a REST-ful backend-as-a-service that’s easy to set up and use with your app.  I highly recommend it. Today, however, I’m going to show you how to take a standard chat application and go from using Parse to using our own server written in Node. Why? Because it’ll be good for you (you’ve been meaning to learn Node for a while now, right?).</p>
+
+<p>We’re also going to implement a Parse-like feature (sorting) in our server. I’m going to show you most of the key points along the way, but if you&rsquo;re coding along at home the implementation of some of these steps will be up to you (you can refer to my example code <a href="https://github.com/georgebonnr/NodeBackend">here</a> if interested). Let’s get started!</p>
+
+<p>The client side of our chat application uses AJAX calls in jQuery to communicate with Parse (if AJAX calls are new to you, check out <a href="http://www.jquery4u.com/ajax/key-differences-post/">this resource</a>). Here’s what it looks like:</p>
+
+<pre><code>var getData =  function() {
+ $.ajax({
+   url: 'https://api.parse.com/1/classes/chatterbox',
+   type: 'GET',
+   data: {
+     order: "-createdAt"
+   },
+   success: function (data) {
+     render(data.results);
+   },
+   error: function (data) {
+     console.error('Failed to retrieve messages');
+   }
+ });
+};
+</code></pre>
+
+<p>The success and error properties define callback functions that will run once the response comes back from the server (hopefully containing our chat data).</p>
+
+<p>We’re going to run our Node server on our local computer for now, so the main thing that’s going to change in our AJAX call is simply the url we are sending the request to. We&rsquo;re also going to add the ability on our server to filter messages into different rooms and only return messages for the client&rsquo;s current room when they request data.</p>
+
+<pre><code>var getData =  function() {
+ $.ajax({
+   url: 'http://127.0.0.1:8080/classes/chatterbox',
+   dataType: 'json',
+   type: 'GET',
+   data: {
+     order: "-createdAt",
+     room: currentRoom // this is a property set in the client-side code.
+   },
+   success: function (data) {
+     console.log(data);
+     render(data);
+   },
+   error: function (data) {
+     console.error('chatterbox: Failed to retrieve messages');
+   }
+ });
+};
+</code></pre>
+
+<p>Let&rsquo;s set up the bare bones of our Node server.  Node includes a module that makes it easy to handle http requests, the rather understatedly-named <code>http</code>.  Here&rsquo;s what our basic server will look like:</p>
+
+<pre><code>var http = require("http");
+var handler = require("./request-handler");
+var port = 8080;
+var ip = "127.0.0.1";
+var server = http.createServer(handler);
+server.listen(port, ip); 
+</code></pre>
+
+<p>As you can see we&rsquo;re defining our process for handling requests in a separate file to keep things cleaner, since that&rsquo;s where most of the logic in our server will go.  The <code>require</code> statements are how Node loads modules, whether they are built in modules like <code>http</code> or separate files that we happen to write.  In <code>request-handler</code> we&rsquo;ll set any variables or functions that we want to make available via the <code>require</code> statement as properties on a <code>module.exports</code> object (we can even define <code>module.exports</code> as a single function, which is what we happen to be doing here).</p>
+
+<p>One of the appealing things about Node is its baked-in emphasis on privacy – it makes you explicitly state which parts of your code you want to make available to other files rather than loading the entire file by default (as we would do in a script tag in plain javascript).</p>
+
+<p>Our request handler will need to know two things to start with: what route the client is requesting (as well as what parameters, if any, are serialized into the url after the route), and what type of request has been sent (here we are just dealing with GET and POST requests).</p>
+
+<p>One way to set up a router for very simple applications like this is to define an object with the requested routes as keys and the appropriate handler actions to take as the corresponding values.  Again, since this is Node we can write pretty much anything we want in plain old Javascript. Here&rsquo;s what a simple router might look like on our back end:</p>
+
+<pre><code>var router = {
+  '/messages': storageAccess,
+  '/getrooms': getRooms,
+  '/': serveFile,
+  '/styles/styles.css': serveFile,
+  '/scripts/app.js': serveFile,
+  '/scripts/config.js': serveFile
+};
+</code></pre>
+
+<p>We&rsquo;ll need to send a response back to the client with a status code, headers, response body, and a content-type property in the headers.</p>
+
+<p>We can set the default response to a status code of 404 (not found) with an appropriate message in the response body (the message will be received by the client and passed into the success callback).</p>
+
+<p>To get the route that the user is requesting out of the url we can require the (again appropriately named) <code>url</code> module in Node and use the <code>parse</code> method to get a string that we can work with.  Then we can check to see if that route exists in our object and if so call the appropriate function in our file which will redefine the status code, headers, and response body as needed.  If we have not defined the route as one we can handle, then we&rsquo;ll simply pass along the 404 default response. Here&rsquo;s what that process looks like:</p>
+
+<pre><code>var pathname = url.parse(request.url).pathname;
+if (router[pathname]) {router[pathname]();}
+response.writeHead(statusCode, headers);
+response.end(responseBody); // response.end will send along whatever message is passed into it in addition to closing the transfer
+</code></pre>
+
+<p>If you&rsquo;ll notice the last two lines will be executed with every request. For this example we&rsquo;re not doing any asynchronous operations in Node so this setup works fine.  However if we were reading from files asynchronously or reading from a database we would want to call response.write() and response.end() in the appropriate callbacks to those actions.</p>
+
+<p>Just as a reminder, if you&rsquo;d like more guidance on the details of the implementation you can check out the finished code <a href="https://github.com/georgebonnr/NodeBackend">here</a></p>
+
+<p><code>storageAccess</code> will, for now, simply grab messages and a list of rooms from in-memory storage (via getter and setter functions).  <code>getRooms</code> will do something similar.  Here are example get and set functions – you can also see how we can handle simple ordering on our server (the <code>options</code> argument will be an object parsed from the url query.)</p>
+
+<pre><code>var set = function(message){
+  message.createdAt = new Date();
+  messages[message.room] ? messages[message.room].push(message) : messages[message.room] = [message];
+  fs.appendFile("log.txt", JSON.stringify(message));
+};
+var get = function(options){
+  if (messages[options.room] === undefined) { messages[options.room] = []; }
+  var roomMessages = messages[options.room] || [];
+  if (options.order) {
+    return roomMessages.sort(function(a,b) {
+      if (options.order[0] === "-") { return b[options.order.slice(1)] - a[options.order.slice(1)]; }
+      return a[options.order] - b[options.order];
+    });
+  }
+  return roomMessages;
+};
+</code></pre>
+
+<p>The <code>fs.appendFile</code> line makes use of another built-in Node module.  <code>fs</code> stands for filesystem, and it allows most server tasks related to reading and writing files to be handled both synchronously and asynchronously.</p>
+
+<p>The last thing we&rsquo;ll look at is how we use <code>fs</code> to serve up html, css, and client-side javascript pages on page load. The first step for our request handler is of course to require the fs module: <code>var fs = require('fs');</code> Next, if you&rsquo;ll recall we mentioned a serveFile function in our router for serving up our assets.  Here&rsquo;s what that function will look like:</p>
+
+<pre><code>var serveFile = function(){
+  statusCode = 200;
+  if (pathname === '/') {
+    headers['Content-Type'] = "text/html";
+    responseBody = fs.readFileSync('../client/index.html');
+  } else {
+    headers['Content-Type'] = (pathname === '/styles/styles.css') ? "text/css" : "text/javascript";
+    responseBody = fs.readFileSync(path.join('../client',pathname));
+  }
+};
+</code></pre>
+
+<p><code>fs.readFileSync</code> refers to the synchronous method for reading a file – it will &ldquo;block&rdquo; execution of all other code until it is done reading a given file and serializing its contents.  Since we are dealing with a relatively small html file this will work fine for our purposes, but much of the power of using Node on the back end lies in its built-in methods for reading and writing data asynchronously.</p>
+
+<p>Check out the <a href="http://nodejs.org/api/fs.html">fs documentation</a> and <a href="http://nathansjslessons.appspot.com/lesson?id=1085">this walkthrough</a> for more info on asynchronous alternatives and try some of them out if you&rsquo;re feeling feisty (remember you&rsquo;ll need to wait until your file is completely read before you send back your http response, which means you&rsquo;ll need to do that work in a callback. To avoid repeating <code>response.writeHead</code> and <code>response.end</code> code in every one your routes, try defining a single <code>responseSet</code> function that each of your routes can call, passing in the appropriate headers and response body as arguments).</p>
+
+<p>There are quite a few details that we didn&rsquo;t go over, but hopefully this gives you a broad overview of a server&rsquo;s basic functionality, and how you can implement that functionality in Node.  Check out the example backend code <a href="https://github.com/georgebonnr/NodeBackend">here</a>, and keep exploring the wonderful world of Node!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Dev Tools Debugging Tips]]></title>
+    <link href="http://georgebonnr.github.io/techblog/blog/2013/10/18/dev-tools-debugging-tips/"/>
+    <updated>2013-10-18T09:58:00-07:00</updated>
+    <id>http://georgebonnr.github.io/techblog/blog/2013/10/18/dev-tools-debugging-tips</id>
+    <content type="html"><![CDATA[<p>NOTE: This is a blog post I wrote for incoming students at Hack Reactor &mdash; Hack Reactor ended up liking it so much they made it part of the pre-course curriculum! If you&rsquo;re a new or prospective developer, hopefully you&rsquo;ll find it helpful too.</p>
+
+<p>As you might imagine we use Chrome Dev Tools quite a bit at Hack Reactor.  Dev Tools has quickly become an indispensable tool for front-end work, but it&rsquo;s even more valuable as a debugging tool for your javascript programs.</p>
+
+<p>If you don&rsquo;t already use it in your debugging workflow (I&rsquo;m looking at you, chronic console.logger), approximately NOW would be a good time to learn.  I&rsquo;m going to use a simple bug scenario to introduce you to Dev Tools debugging.</p>
+
+<p>Imagine we are given a problem to solve:</p>
+
+<pre><code>// given an array, write a function that will, for every item in the array, 
+// alert to the screen a string containing the item and the item's index in the array.
+// you have been given a "loop" function, which takes an array and also 
+// takes a function which will be called on every item in the array.
+
+var example = ["a","b","c"];
+
+var loop = function(array, iterator) {
+  for (var i=0; i&lt;array.length; i++) {
+    iterator(array[i]);
+  }
+};
+</code></pre>
+
+<p>our solution:</p>
+
+<pre><code>var alertArray = function(array) {
+  loop(array, function(item, index){
+    alert(item + " " + index);
+  });
+};
+</code></pre>
+
+<p>So let&rsquo;s run this solution.  I set up a simple html page and paste the code we wrote in a script.  I&rsquo;m going to invoke the function we wrote by adding <code>alertArray(example);</code> to my script.</p>
+
+<p>When I open the page and the script runs I see:</p>
+
+<p><img src="http://georgebonnr.github.io/techblog/images/devtools_post/alert1.png" /></p>
+
+<p><img src="http://georgebonnr.github.io/techblog/images/devtools_post/alert2.png" /></p>
+
+<p><img src="http://georgebonnr.github.io/techblog/images/devtools_post/alert3.png" /></p>
+
+<p>Ruh-roh.  Where&rsquo;s the index?  You probably already know why it&rsquo;s not displaying, but I&rsquo;m going to use this simple scenario to demonstrate what a typical debugging workflow would look like.  A good question to ask yourself when you encounter a bug is &ldquo;what is the justification for my expectation that my code will run the way that I expect?</p>
+
+<p>If you think you can identify a place where your expectation and the reality of the code (the bug) might diverge, enter a new line above that point and type <code>debugger;</code>  This will cause Chrome to pause execution at that line and wait for further instructions to proceed.</p>
+
+<p>If you prefer not to type anything in your code you can set virtual debugger statements called breakpoints in Dev Tools – one downside of breakpoints, though, is that if you change the number of lines in your code and run the script again, Chrome&rsquo;s breakpoints may wind up on lines that you didn&rsquo;t intend.
+Here&rsquo;s what happens in Dev Tools (<code>command</code>+<code>option</code>+<code>i</code> in Chrome) when we run the code again with our debugger statement inserted:</p>
+
+<p>(open images in new tab to see them at full size)
+<img src="http://georgebonnr.github.io/techblog/images/devtools_post/debug1.png" /></p>
+
+<p>Step over/into/out of are very handy tools that you will be using for potentially hours on end, so here are some more details on each:</p>
+
+<ul>
+<li><p>step over will proceed by a single line of code. If there is a function call in the executed line, step over will call the function and do whatever work is contained therein&hellip; but you will not see the execution of the function. Useful if you need to proceed through a function call that you are sure is not the source of your bug.</p></li>
+<li><p>step into will also proceed by one line of code. If there is a function call it will transport you to the place in your code where that function call is actually running.  You will be able to inspect the internals (variables, etc) of that called function.</p></li>
+<li><p>step out of does not &ldquo;rewind&rdquo; out of a function call (which the arrow pointing up may make you think at first), rather it will &ldquo;fast forward&rdquo; through the rest of a function (stepping over any other function calls contained therein) and return you to its parent function.</p></li>
+</ul>
+
+
+<p>So to proceed I&rsquo;m going to click step over (or step into) to get to the beginning of line 18 (in the context of line 17 step over and step into will do the same thing since there&rsquo;s no function call on that line).</p>
+
+<p>At the beginning of line 18 my console will look exactly the same.  Line 18, however, contains the call to the loop function, so I&rsquo;m going to click &ldquo;step into.&rdquo;  Here&rsquo;s what I&rsquo;ll see:</p>
+
+<p><img src="http://georgebonnr.github.io/techblog/images/devtools_post/debug2.png" /></p>
+
+<p>I&rsquo;m going to click step over again to get to line 8, then I&rsquo;m going to click step into to go into my iterator call (in this case the anonymous function where I&rsquo;m alerting).  Here&rsquo;s what I see:</p>
+
+<p><img src="http://georgebonnr.github.io/techblog/images/devtools_post/debug3.png" /></p>
+
+<br>
+
+
+<p><img src="http://georgebonnr.github.io/techblog/images/devtools_post/debug4.png" /></p>
+
+<p>For a problem this simple it may have seemed like overkill to use this debugging procedure in Dev Tools (especially when you can hit line 8 with a rock from line 19).
+When your program gets big enough, though, that your functions call functions located in other files, or your recursive function has a bug somewhere in its 15th call to itself, Dev Tools will save your butt.</p>
+
+<p>Practice this pattern!</p>
+
+<p>As always, shoot any questions or conversations to <a href="&#109;&#x61;&#x69;&#108;&#x74;&#x6f;&#58;&#x67;&#x65;&#x6f;&#114;&#x67;&#101;&#98;&#111;&#110;&#x6e;&#114;&#x40;&#x67;&#109;&#x61;&#105;&#x6c;&#x2e;&#x63;&#x6f;&#x6d;">&#103;&#x65;&#x6f;&#114;&#x67;&#101;&#98;&#111;&#x6e;&#x6e;&#x72;&#64;&#103;&#x6d;&#97;&#105;&#108;&#46;&#x63;&#x6f;&#x6d;</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Maker Patterns Pt. 2]]></title>
+    <link href="http://georgebonnr.github.io/techblog/blog/2013/10/06/maker-patterns-pt-2/"/>
+    <updated>2013-10-06T20:25:00-07:00</updated>
+    <id>http://georgebonnr.github.io/techblog/blog/2013/10/06/maker-patterns-pt-2</id>
+    <content type="html"><![CDATA[<h2>All About Prototypes</h2>
+
+<p>We&rsquo;ve all got baggage. Javascript is no exception. It just so happens that every single function that gets defined in Javascript comes with its own companion object called a prototype. This prototype object in most cases hangs around doing nothing at all (besides creating useless overhead). When it comes time to instantiate an object in Javascript, though, this prototype &ldquo;assistant&rdquo; offers powerful functionality.</p>
+
+<p>Before we go further with prototypes let&rsquo;s delve into a little backstory, which unfortunately will include discovering some of the skeletons in Javascript&rsquo;s closet. In 1995 Netscape tasked employee Brendan Eich with developing a new scripting language for the Netscape browser. This language would be aimed at the then-exploding class of amateur programmers ready and eager to create websites that blinked, flashed, danced, jumped, and sang. This language was also supposed to be a direct competitor to Visual Basic (readers who associate Javascript with the current world of Node, Angular, and other coolier-than-thou environments might feel&hellip; perturbed, to put it mildly, about the last two sentences.  &hellip;I said there would be skeletons).</p>
+
+<p>Under pressure to produce a working prototype of the language in a short amount of time, Brendan Eich grabbed some closures from Scheme, threw in a sweet prototype-based inheritance model inspired by Self, shrugged at or failed to notice a host of crippling idiosyncrasies (for example <code>alert(typeof NaN); //alerts 'Number' alert(NaN === NaN);  //evaluates false</code>), and called it a day.</p>
+
+<p>Eich&rsquo;s bosses looked at the language, smiled and nodded politely, and told him to add a bunch of stuff to it to make it look more like Java. Java was the new hotness at the time and Netscape desperately wanted to leverage that hotness – enough that they even decided to name the new language Javascript, again for reasons that were mostly arbitrary and marketing-related. So the end result was a scripting language misleadingly-named Javascript that included a bastardized version of prototypal inheritance featuring some Java-esque functionality stuck on with Elmer&rsquo;s glue.</p>
+
+<p>Also, most of the aforementioned crippling idiosyncracies coasted through to the final version unfixed. <a href="http://www.javaworld.com/javaworld/jw-03-1996/idgns.java.1995/idgns.java.1995.114.html">This</a> is what the press release looked like (note the breathless mention of &ldquo;object-oriented&rdquo;, which was true in only the hackiest of elmers-gluiest senses, and also the embarrassing mention of visual basic).</p>
+
+<p>Let&rsquo;s step over that skeleton clutching your ankle and move on!</p>
+
+<p>If you haven&rsquo;t figured it out already, Protypal inheritance is the pattern that attempts to return to Eich&rsquo;s original ideas, and Pseudo-classical is the pattern that makes use of the fake-object-oriented parts that got added to by his bosses.</p>
+
+<h2>Prototypal</h2>
+
+<pre><code>var Pizza = function(size) {
+  var pizza = Object.create(Pizza.prototype);
+  pizza.size = size;
+  pizza.sauce = tomato;
+  pizza.slices = 0
+
+  return pizza;
+}
+
+Pizza.prototype.cheese = mozzarella;
+
+Pizza.prototype.slice = function() {
+  this.slices += 2;
+  // slice in this case is a verb, not a noun.
+}
+
+var myPizza = Pizza(14)
+</code></pre>
+
+<p>Remember I said that a prototype was a companion object. One common (and understandable) source of confusion for Javascript beginners is that when they see &ldquo;Pizza.prototype&rdquo; they assume it refers to some sort of parent of the Pizza constructor. In fact, to stick with the familial analogy, Pizza.prototype is more like Pizza&rsquo;s invisible friend that we suddenly decided to start addressing by name (perhaps this is a movie a late-80s Steven Spielberg might have directed).</p>
+
+<p>What&rsquo;s interesting is that the word &ldquo;prototype&rdquo; does in fact refer to a parent-child relationship – it means that the <code>Pizza.prototype</code> object is intended to be a parent to any pizza instances that are created using the Pizza function, such as our example <code>myPizza</code>. <code>Object.create()</code> on line 27 is what actually sets that parent-child relationship in this pattern. This means that when we refer to <code>myPizza.cheese</code>, <code>myPizza</code>, finding that it has no immediate property named cheese, will ask its designated parent object if it has that property, and if does, return that property as if it was its own. Thus <code>myPizza.cheese</code> will return <code>mozzarella</code>.</p>
+
+<p><em>PROS:</em> <br>
+&ndash;    Good for memory management, since we only define the <code>slice</code> method and <code>cheese</code> property in one place and let all instantiated objects refer to those properties rather than owning their own copy (we are making the decision for now that all pizzas only need to use mozzarella cheese, which if you&rsquo;ve ever tried to experiment with cheddar as a substitue at home you will understand). <br>
+–    Cleaner and safer than using mixins (which we looked at in Pt. 1) <br>
+–    Supports subclassing (which we may get into in another post) <br>
+–    Makes Brendan Eich feel good about his decisions in life? <br></p>
+
+<p><em>CONS:</em> <br>
+&ndash; Worse performance than other patterns in certain scenarios. <br>
+&ndash; Different than typical OOP syntax &ndash; can cause mild-to-moderate confusion for beginners coming from &ldquo;classical&rdquo; languages.</p>
+
+<h2>Pseudo-classical</h2>
+
+<pre><code>var Pizza = function(size) {
+
+  this.size = size;
+  this.sauce = tomato;
+  this.slices = 0;
+
+}
+
+Pizza.prototype.cheese = mozzarella;
+
+Pizza.prototype.slice = function() {
+  this.slices += 2;
+}
+
+var myPizza = new Pizza(14)
+</code></pre>
+
+<p>If you&rsquo;re comfortable with OOP this pattern will look the most familiar to you.  What may not be clear is how the pseudo-classical pattern is using prototypal inheritance under the hood. The easiest way to vizualize this is to mentally insert <code>this = Object.create(Pizza.prototype)</code> as the first line inside <code>Pizza</code> and then mentally insert <code>return this</code> as the last line in <code>Pizza</code>. This way the prototypal inheritance is established and the classical syntax is preserved (the use of the <code>new</code> keyword is what indicates to Javascript that this constructor function is intended to be used in the pseudoclassical style).</p>
+
+<p><em>PROS:</em> <br>
+&ndash; Familiar to classical programmers <br>
+&ndash; Has been optimized for performance in certain scenarios <br></p>
+
+<p><em>CONS:</em> <br>
+&ndash; Ridiculous bugs can happen if you forget the <code>new</code> keyword <br>
+&ndash; Obscures what is really happening behind the scenes in Javascript to acheive the inheritance<br>
+&ndash; Using this pattern when making subclasses (a category of constructed objects that delegates to another constructed category) can have serious downsides (I prefer a combination of this pattern with prototypal for subclassing – I might do another post on the interesting challenges that subclassing poses in js).</p>
+
+<p>That&rsquo;s it! If you want to review the other two patterns you can find them <a href="http://georgebonnr.github.io/blog/2013/10/02/maker-patterns-pt-1/">here</a>.  Now go ahead and use these patterns to build your cats website. I was joking when I said it was dumb&hellip; it&rsquo;s gonna be great, people will love it.</p>
+
+<p>As always if you have more questions feel free to email me at <a href="&#109;&#97;&#105;&#108;&#x74;&#111;&#x3a;&#103;&#x65;&#111;&#114;&#103;&#x65;&#x62;&#x6f;&#x6e;&#110;&#x72;&#x40;&#x67;&#109;&#97;&#x69;&#x6c;&#46;&#99;&#111;&#109;">&#103;&#101;&#x6f;&#114;&#x67;&#101;&#x62;&#111;&#110;&#110;&#114;&#64;&#103;&#109;&#97;&#x69;&#108;&#46;&#x63;&#111;&#x6d;</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Maker Patterns Pt. 1]]></title>
+    <link href="http://georgebonnr.github.io/techblog/blog/2013/10/02/maker-patterns-pt-1/"/>
+    <updated>2013-10-02T22:34:00-07:00</updated>
+    <id>http://georgebonnr.github.io/techblog/blog/2013/10/02/maker-patterns-pt-1</id>
+    <content type="html"><![CDATA[<p>Hey kids!</p>
+
+<p>Let&rsquo;s talk about making things in Javascript.  I don&rsquo;t mean making your dumb cats website, I mean making things IN Javascript.  What are some useful ways to make (build / instantiate) things (objects) in the Javascript language?</p>
+
+<p>For this post I&rsquo;m assuming that you&rsquo;re fairly new to Javascript, although you may have a little bit of programming experience in another language.</p>
+
+<p>First of all, if you come from a language that handles object instantiation in a more conventional way (like Ruby or Java), you&rsquo;ve perhaps complained to yourself that Javascript is distressingly un-pretty and complicated in its implementation of classes and inheritance.  You would be right, especially in the case that you&rsquo;ve been trying to use Javascript in a Ruby-or-Java-like way.  However, Javascript more than makes up for this fugliness by offering significantly more power and flexibility in the ways you can create objects.</p>
+
+<p>I&rsquo;m going to demonstrate four different patterns for instantiating objects in Javascript. To keep things brief I&rsquo;ll only cover two functional patterns in this post, and in the next post I&rsquo;ll get into prototype chains in Javascript and prototype-based maker patterns. When it&rsquo;s all said and done you can choose whichever style you think will suit your project best.  If you have questions about the code used to make each example work (such as how Javascript uses the keyword <code>this</code>), you&rsquo;re welcome to email me with questions, or wait for an upcoming post on interesting Javascript artifacts (like <code>this</code>).</p>
+
+<h2>Functional</h2>
+
+<pre><code>var Pizza = function(size) {
+  var pizza = {};
+  pizza.size = size;
+  pizza.cheese = mozzarella;
+  pizza.sauce = tomato;
+  pizza.slices = 0
+  pizza.slice = function() {
+    this.slices += 2;
+    // slice in this case is a verb, not a noun.
+  }
+
+  return pizza;
+}
+
+var myPizza = Pizza(14)
+</code></pre>
+
+<p>Pretty simple.  You call this function, pass in a size, and you immediately get back a pizza object (our pizza-making factory is pretty quick).</p>
+
+<p><em>PROS:</em> <br>
+&ndash;   Simple and un-fussy. <br>
+&ndash;   Supports functional programming style (which is a totally worthwhile thing to learn. If you&rsquo;re feeling ambitious check out <a href="http://msdn.microsoft.com/en-us/magazine/gg476048.aspx">this terrific article</a> on functional vs. object-oriented programming styles)</p>
+
+<p><em>CONS:</em> <br>
+&ndash; Each pizza comes with its own set of properties for all the things listed in the pizza object, including its own slice function (if you&rsquo;re wondering why that&rsquo;s a bad thing you will know in a second). <br>
+&ndash; Also, if we want to make pizzas with different types of cheese or sauce (subclasses), we&rsquo;ll have to buid a second equally large pizza factory (not the most efficient thing in the world, although not quite as inefficient as OOP folks would have you believe).</p>
+
+<h2>Functional with Mixins</h2>
+
+<pre><code>var Pizza = function(size) {
+  var pizza = {};
+  pizza.size = size;
+  pizza.cheese = mozzarella;
+  pizza.sauce = tomato;
+  pizza.slices = 0
+  // this next line is a custom function we have written at the bottom of the example
+  extend(pizza, slice)
+  return pizza;
+}
+
+var slice =  {};
+slice.slice = function() {
+      this.slices += 2;
+};
+
+var extend = function(to, from) {
+  for (var property in from) {
+    to[property] = from[property]
+  }
+}
+</code></pre>
+
+<p>If you don&rsquo;t understand what the extend function is doing, just know that it&rsquo;s surveying whatever&rsquo;s in the slice object (in this case just a slicing function), and telling the pizza object to act like it can do whatever the slice object can do. This is called a mixin, and it&rsquo;s a pretty cool concept (some other languages have their own, different ways of doing mixins). <br>
+You can do a wide variety things in Javascript with mixins &mdash; if you want to investigate further, check out <a href="http://javascriptweblog.wordpress.com/2011/05/31/a-fresh-look-at-javascript-mixins/">this writeup</a>. If you&rsquo;re wondering if you can &ldquo;mix in&rdquo; the slice functionality into any object (like a pie), then you&rsquo;ve just discovered part of why mixins are so cool.</p>
+
+<p><em>PROS:</em> <br>
+&ndash; We&rsquo;ve solved the problem of each pizza having its own slicing mechanism (the problem was that each slicing function took up its own space in memory with each successive pizza. Now we have created a single slicing function that takes up only one space in memory and have told every pizza to refer to it when it needs to slice). <br/>
+<em>CONS:</em> <br>
+&ndash; Having a bunch of random objects floating around possibly getting mixed into other objects can be a messy way to work. What if you really only wanted just pizzas to be able to slice? What if you accidentally extended your pet snake object with slice (gross)? Mixins are powerful but can be dangerous in the wrong hands.</p>
+
+<p>Next Post:
+I&rsquo;ll get into prototypes in Javascript &ndash; what they are, how they came to be, and different ways you can use them to construct objects.  If you have any questions about anything in this post you can email me through my Github profile in the sidebar. Stay tuned!</p>
+]]></content>
+  </entry>
+  
+</feed>

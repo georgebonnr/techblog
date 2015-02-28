@@ -1,0 +1,334 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Dev Tools Debugging Tips - Georgetech</title>
+  <meta name="author" content="George Bonner">
+
+  
+  <meta name="description" content="Developer tips on Javascript, Node, Backbone, etc.">
+  
+  <meta name="keywords" content="javascript,backbone,node,">
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://georgebonnr.github.io/techblog/blog/2013/10/18/dev-tools-debugging-tips/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Georgetech" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-44899766-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Georgetech</a></h1>
+    <h2><a href="http://www.georgebonnr.com">www.georgebonnr.com</a> > tech blog</h2>
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:georgebonnr.github.io/techblog" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Dev Tools Debugging Tips</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-18T09:58:00-07:00" pubdate data-updated="true">Oct 18<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>NOTE: This is a blog post I wrote for incoming students at Hack Reactor &mdash; Hack Reactor ended up liking it so much they made it part of the pre-course curriculum! If you&rsquo;re a new or prospective developer, hopefully you&rsquo;ll find it helpful too.</p>
+
+<p>As you might imagine we use Chrome Dev Tools quite a bit at Hack Reactor.  Dev Tools has quickly become an indispensable tool for front-end work, but it&rsquo;s even more valuable as a debugging tool for your javascript programs.</p>
+
+<p>If you don&rsquo;t already use it in your debugging workflow (I&rsquo;m looking at you, chronic console.logger), approximately NOW would be a good time to learn.  I&rsquo;m going to use a simple bug scenario to introduce you to Dev Tools debugging.</p>
+
+<p>Imagine we are given a problem to solve:</p>
+
+<pre><code>// given an array, write a function that will, for every item in the array, 
+// alert to the screen a string containing the item and the item's index in the array.
+// you have been given a "loop" function, which takes an array and also 
+// takes a function which will be called on every item in the array.
+
+var example = ["a","b","c"];
+
+var loop = function(array, iterator) {
+  for (var i=0; i&lt;array.length; i++) {
+    iterator(array[i]);
+  }
+};
+</code></pre>
+
+<p>our solution:</p>
+
+<pre><code>var alertArray = function(array) {
+  loop(array, function(item, index){
+    alert(item + " " + index);
+  });
+};
+</code></pre>
+
+<p>So let&rsquo;s run this solution.  I set up a simple html page and paste the code we wrote in a script.  I&rsquo;m going to invoke the function we wrote by adding <code>alertArray(example);</code> to my script.</p>
+
+<p>When I open the page and the script runs I see:</p>
+
+<p><img src="/images/devtools_post/alert1.png" /></p>
+
+<p><img src="/images/devtools_post/alert2.png" /></p>
+
+<p><img src="/images/devtools_post/alert3.png" /></p>
+
+<p>Ruh-roh.  Where&rsquo;s the index?  You probably already know why it&rsquo;s not displaying, but I&rsquo;m going to use this simple scenario to demonstrate what a typical debugging workflow would look like.  A good question to ask yourself when you encounter a bug is &ldquo;what is the justification for my expectation that my code will run the way that I expect?</p>
+
+<p>If you think you can identify a place where your expectation and the reality of the code (the bug) might diverge, enter a new line above that point and type <code>debugger;</code>  This will cause Chrome to pause execution at that line and wait for further instructions to proceed.</p>
+
+<p>If you prefer not to type anything in your code you can set virtual debugger statements called breakpoints in Dev Tools – one downside of breakpoints, though, is that if you change the number of lines in your code and run the script again, Chrome&rsquo;s breakpoints may wind up on lines that you didn&rsquo;t intend.
+Here&rsquo;s what happens in Dev Tools (<code>command</code>+<code>option</code>+<code>i</code> in Chrome) when we run the code again with our debugger statement inserted:</p>
+
+<p>(open images in new tab to see them at full size)
+<img src="/images/devtools_post/debug1.png" /></p>
+
+<p>Step over/into/out of are very handy tools that you will be using for potentially hours on end, so here are some more details on each:</p>
+
+<ul>
+<li><p>step over will proceed by a single line of code. If there is a function call in the executed line, step over will call the function and do whatever work is contained therein&hellip; but you will not see the execution of the function. Useful if you need to proceed through a function call that you are sure is not the source of your bug.</p></li>
+<li><p>step into will also proceed by one line of code. If there is a function call it will transport you to the place in your code where that function call is actually running.  You will be able to inspect the internals (variables, etc) of that called function.</p></li>
+<li><p>step out of does not &ldquo;rewind&rdquo; out of a function call (which the arrow pointing up may make you think at first), rather it will &ldquo;fast forward&rdquo; through the rest of a function (stepping over any other function calls contained therein) and return you to its parent function.</p></li>
+</ul>
+
+
+<p>So to proceed I&rsquo;m going to click step over (or step into) to get to the beginning of line 18 (in the context of line 17 step over and step into will do the same thing since there&rsquo;s no function call on that line).</p>
+
+<p>At the beginning of line 18 my console will look exactly the same.  Line 18, however, contains the call to the loop function, so I&rsquo;m going to click &ldquo;step into.&rdquo;  Here&rsquo;s what I&rsquo;ll see:</p>
+
+<p><img src="/images/devtools_post/debug2.png" /></p>
+
+<p>I&rsquo;m going to click step over again to get to line 8, then I&rsquo;m going to click step into to go into my iterator call (in this case the anonymous function where I&rsquo;m alerting).  Here&rsquo;s what I see:</p>
+
+<p><img src="/images/devtools_post/debug3.png" /></p>
+
+<br>
+
+
+<p><img src="/images/devtools_post/debug4.png" /></p>
+
+<p>For a problem this simple it may have seemed like overkill to use this debugging procedure in Dev Tools (especially when you can hit line 8 with a rock from line 19).
+When your program gets big enough, though, that your functions call functions located in other files, or your recursive function has a bug somewhere in its 15th call to itself, Dev Tools will save your butt.</p>
+
+<p>Practice this pattern!</p>
+
+<p>As always, shoot any questions or conversations to <a href="&#109;&#x61;&#x69;&#108;&#x74;&#x6f;&#58;&#x67;&#x65;&#x6f;&#114;&#x67;&#101;&#98;&#111;&#110;&#x6e;&#114;&#x40;&#x67;&#109;&#x61;&#105;&#x6c;&#x2e;&#x63;&#x6f;&#x6d;">&#103;&#x65;&#x6f;&#114;&#x67;&#101;&#98;&#111;&#x6e;&#x6e;&#x72;&#64;&#103;&#x6d;&#97;&#105;&#108;&#46;&#x63;&#x6f;&#x6d;</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">George Bonner</span></span>
+
+      <!-- 
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-18T09:58:00-07:00" pubdate data-updated="true">Oct 18<span>th</span>, 2013</time> -->
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://georgebonnr.github.io/techblog/blog/2013/10/18/dev-tools-debugging-tips/" data-via="georgebonnr" data-counturl="http://georgebonnr.github.io/techblog/blog/2013/10/18/dev-tools-debugging-tips/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/10/06/maker-patterns-pt-2/" title="Previous Post: Maker Patterns Pt. 2">&laquo; Maker Patterns Pt. 2</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/10/28/prototyping-a-parse-like-server-in-node/" title="Next Post: Prototyping a Parse-like Server in Node">Prototyping a Parse-like Server in Node &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/02/08/how-to-crash-chrome-v8-in-one-line/">How to Crash Chrome V8 in One Line</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/01/19/">Prototypes Are Not Classes</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/11/11/i-just-presented-at-launch-hackathon/">I Just Presented as a Finalist at LAUNCH Hackathon</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/28/prototyping-a-parse-like-server-in-node/">Prototyping a Parse-like Server in Node</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/18/dev-tools-debugging-tips/">Dev Tools Debugging Tips</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub</h1>
+  <ul id="gh_repos">
+    <h2><a href="https://github.com/georgebonnr">georgebonnr</a></h2>
+  </ul>
+  
+  <!-- <a href="https://github.com/georgebonnr">@georgebonnr</a> on GitHub -->
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'georgebonnr',
+            count: none,
+            skip_forks: false,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - George Bonner -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+  - <span class="credit">Theme by <a href="http://www.gehaxelt.in">Gehaxelt</a></span>
+  <span class="credit">and <a href="http://www.it-solutions-neef.de">IT Solutions Neef</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

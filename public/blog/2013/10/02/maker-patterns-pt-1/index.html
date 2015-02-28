@@ -1,0 +1,331 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Maker Patterns Pt. 1 - Georgetech</title>
+  <meta name="author" content="George Bonner">
+
+  
+  <meta name="description" content="Maker patterns in Javascript pt. 1 – functional instantiation">
+  
+  <meta name="keywords" content="javascript,functional">
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://georgebonnr.github.io/techblog/blog/2013/10/02/maker-patterns-pt-1/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Georgetech" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-44899766-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Georgetech</a></h1>
+    <h2><a href="http://www.georgebonnr.com">www.georgebonnr.com</a> > tech blog</h2>
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:georgebonnr.github.io/techblog" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Maker Patterns Pt. 1</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-02T22:34:00-07:00" pubdate data-updated="true">Oct 2<span>nd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Hey kids!</p>
+
+<p>Let&rsquo;s talk about making things in Javascript.  I don&rsquo;t mean making your dumb cats website, I mean making things IN Javascript.  What are some useful ways to make (build / instantiate) things (objects) in the Javascript language?</p>
+
+<p>For this post I&rsquo;m assuming that you&rsquo;re fairly new to Javascript, although you may have a little bit of programming experience in another language.</p>
+
+<p>First of all, if you come from a language that handles object instantiation in a more conventional way (like Ruby or Java), you&rsquo;ve perhaps complained to yourself that Javascript is distressingly un-pretty and complicated in its implementation of classes and inheritance.  You would be right, especially in the case that you&rsquo;ve been trying to use Javascript in a Ruby-or-Java-like way.  However, Javascript more than makes up for this fugliness by offering significantly more power and flexibility in the ways you can create objects.</p>
+
+<p>I&rsquo;m going to demonstrate four different patterns for instantiating objects in Javascript. To keep things brief I&rsquo;ll only cover two functional patterns in this post, and in the next post I&rsquo;ll get into prototype chains in Javascript and prototype-based maker patterns. When it&rsquo;s all said and done you can choose whichever style you think will suit your project best.  If you have questions about the code used to make each example work (such as how Javascript uses the keyword <code>this</code>), you&rsquo;re welcome to email me with questions, or wait for an upcoming post on interesting Javascript artifacts (like <code>this</code>).</p>
+
+<h2>Functional</h2>
+
+<pre><code>var Pizza = function(size) {
+  var pizza = {};
+  pizza.size = size;
+  pizza.cheese = mozzarella;
+  pizza.sauce = tomato;
+  pizza.slices = 0
+  pizza.slice = function() {
+    this.slices += 2;
+    // slice in this case is a verb, not a noun.
+  }
+
+  return pizza;
+}
+
+var myPizza = Pizza(14)
+</code></pre>
+
+<p>Pretty simple.  You call this function, pass in a size, and you immediately get back a pizza object (our pizza-making factory is pretty quick).</p>
+
+<p><em>PROS:</em> <br>
+&ndash;   Simple and un-fussy. <br>
+&ndash;   Supports functional programming style (which is a totally worthwhile thing to learn. If you&rsquo;re feeling ambitious check out <a href="http://msdn.microsoft.com/en-us/magazine/gg476048.aspx">this terrific article</a> on functional vs. object-oriented programming styles)</p>
+
+<p><em>CONS:</em> <br>
+&ndash; Each pizza comes with its own set of properties for all the things listed in the pizza object, including its own slice function (if you&rsquo;re wondering why that&rsquo;s a bad thing you will know in a second). <br>
+&ndash; Also, if we want to make pizzas with different types of cheese or sauce (subclasses), we&rsquo;ll have to buid a second equally large pizza factory (not the most efficient thing in the world, although not quite as inefficient as OOP folks would have you believe).</p>
+
+<h2>Functional with Mixins</h2>
+
+<pre><code>var Pizza = function(size) {
+  var pizza = {};
+  pizza.size = size;
+  pizza.cheese = mozzarella;
+  pizza.sauce = tomato;
+  pizza.slices = 0
+  // this next line is a custom function we have written at the bottom of the example
+  extend(pizza, slice)
+  return pizza;
+}
+
+var slice =  {};
+slice.slice = function() {
+      this.slices += 2;
+};
+
+var extend = function(to, from) {
+  for (var property in from) {
+    to[property] = from[property]
+  }
+}
+</code></pre>
+
+<p>If you don&rsquo;t understand what the extend function is doing, just know that it&rsquo;s surveying whatever&rsquo;s in the slice object (in this case just a slicing function), and telling the pizza object to act like it can do whatever the slice object can do. This is called a mixin, and it&rsquo;s a pretty cool concept (some other languages have their own, different ways of doing mixins). <br>
+You can do a wide variety things in Javascript with mixins &mdash; if you want to investigate further, check out <a href="http://javascriptweblog.wordpress.com/2011/05/31/a-fresh-look-at-javascript-mixins/">this writeup</a>. If you&rsquo;re wondering if you can &ldquo;mix in&rdquo; the slice functionality into any object (like a pie), then you&rsquo;ve just discovered part of why mixins are so cool.</p>
+
+<p><em>PROS:</em> <br>
+&ndash; We&rsquo;ve solved the problem of each pizza having its own slicing mechanism (the problem was that each slicing function took up its own space in memory with each successive pizza. Now we have created a single slicing function that takes up only one space in memory and have told every pizza to refer to it when it needs to slice). <br/>
+<em>CONS:</em> <br>
+&ndash; Having a bunch of random objects floating around possibly getting mixed into other objects can be a messy way to work. What if you really only wanted just pizzas to be able to slice? What if you accidentally extended your pet snake object with slice (gross)? Mixins are powerful but can be dangerous in the wrong hands.</p>
+
+<p>Next Post:
+I&rsquo;ll get into prototypes in Javascript &ndash; what they are, how they came to be, and different ways you can use them to construct objects.  If you have any questions about anything in this post you can email me through my Github profile in the sidebar. Stay tuned!</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">George Bonner</span></span>
+
+      <!-- 
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-02T22:34:00-07:00" pubdate data-updated="true">Oct 2<span>nd</span>, 2013</time> -->
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/javascript/'>javascript</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://georgebonnr.github.io/techblog/blog/2013/10/02/maker-patterns-pt-1/" data-via="georgebonnr" data-counturl="http://georgebonnr.github.io/techblog/blog/2013/10/02/maker-patterns-pt-1/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/10/06/maker-patterns-pt-2/" title="Next Post: Maker Patterns Pt. 2">Maker Patterns Pt. 2 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/02/08/how-to-crash-chrome-v8-in-one-line/">How to Crash Chrome V8 in One Line</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/01/19/">Prototypes Are Not Classes</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/11/11/i-just-presented-at-launch-hackathon/">I Just Presented as a Finalist at LAUNCH Hackathon</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/28/prototyping-a-parse-like-server-in-node/">Prototyping a Parse-like Server in Node</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/18/dev-tools-debugging-tips/">Dev Tools Debugging Tips</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub</h1>
+  <ul id="gh_repos">
+    <h2><a href="https://github.com/georgebonnr">georgebonnr</a></h2>
+  </ul>
+  
+  <!-- <a href="https://github.com/georgebonnr">@georgebonnr</a> on GitHub -->
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'georgebonnr',
+            count: none,
+            skip_forks: false,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - George Bonner -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+  - <span class="credit">Theme by <a href="http://www.gehaxelt.in">Gehaxelt</a></span>
+  <span class="credit">and <a href="http://www.it-solutions-neef.de">IT Solutions Neef</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
